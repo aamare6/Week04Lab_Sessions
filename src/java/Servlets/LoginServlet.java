@@ -21,19 +21,20 @@ public class LoginServlet extends HttpServlet {
         HttpSession session = request.getSession();
         
         String logout = request.getParameter("logout");
-        if (logout != null && logout.equals("logout")) {
-        session.invalidate();
+        if (logout != null) {
+            session.invalidate();
         // display message 
         request.setAttribute("logOutMessage", "Successfully logged out.");
+        
         getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
         }
         
-        User user = (User) session.getAttribute("user");
         
-        if (user != null) {  
+        
+        if ( session.getAttribute("username") != null) {  
         response.sendRedirect("home"); 
-        } else {
-        
+        } 
+        else {
         getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
         }
         }
@@ -53,30 +54,21 @@ public class LoginServlet extends HttpServlet {
          User user = new User();
         // check is username and password not empty 
         if (username != null || !username.isEmpty() || password != null || !password.isEmpty()) {
-            
-        // passes the user name and password parameters to the login() method of  AccountService class
-      
+     
            user = acc.login(username, password);
          
         }
-         //   If login() returns a non-null value, store the username in a session variable and redirect  the user to the home url
+       
            if (user != null) {
            session.setAttribute("username", username);
-          /// response.sendRedirect("/WEB-INF/home.jsp");
-          response.sendRedirect("home");
+         response.sendRedirect("home");
            } else {
            request.setAttribute("username", username);
            request.setAttribute("password", password);
-           // If the authentication parameters are invalid, display an appropriate error message
            request.setAttribute("Message", "Username or password entered is invalid.");
            // forward to login.jsp 
            getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
            }
-
-           
-          
-           
-// User user = new AccountService(username, password).login(username,password);
         
         
         }
